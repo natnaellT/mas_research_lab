@@ -1,0 +1,11 @@
+crewai
+fastapi
+uvicorn
+python-dotenv
+langchain-openai
+google-generativeai
+duckduckgo-search
+pytest
+pytest-asyncio
+httpx
+langchain-community
