@@ -1,9 +1,14 @@
-from langchain_community.tools import DuckDuckGoSearchRun
-from langchain.tools import tool
+from crewai.tools import BaseTool
+from langchain_community.utilities import GoogleSerperAPIWrapper
+import os
 
-class SearchTools:
-    @tool("Search the internet")
-    def search_internet(query):
-        """Useful to search the internet about a a given topic and return relevant results"""
-        search = DuckDuckGoSearchRun()
+class SearchTool(BaseTool):
+    name: str = "Search"
+    description: str = "Useful for search-based queries. Use this to find current information about markets, technologies, and companies."
+
+    def _run(self, query: str) -> str:
+        search = GoogleSerperAPIWrapper(serper_api_key=os.getenv("SERPER_API_KEY"))
         return search.run(query)
+
+# Initialize the tool
+mas_search_tool = SearchTool()

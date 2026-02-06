@@ -7,6 +7,36 @@ interface ReportViewProps {
 }
 
 const ReportView: React.FC<ReportViewProps> = ({ reportContent }) => {
+    const handleExportPDF = async () => {
+        if (typeof window === 'undefined') return;
+
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDF = (await import('jspdf')).default;
+
+            const element = document.getElementById('report-content');
+            if (!element) return;
+
+            const canvas = await html2canvas(element, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('Research_Report.pdf');
+        } catch (error) {
+            console.error('PDF Export failed', error);
+            alert("Failed to export PDF. Please try again.");
+        }
+    };
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(reportContent);
+        alert("Report copied to clipboard!");
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -26,10 +56,17 @@ const ReportView: React.FC<ReportViewProps> = ({ reportContent }) => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white" title="Copy Text">
+                        <button
+                            onClick={handleCopy}
+                            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                            title="Copy Text"
+                        >
                             <Copy className="w-4 h-4" />
                         </button>
-                        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg flex items-center gap-2 transition-all font-medium text-sm shadow-[0_0_15px_-3px_rgba(168,85,247,0.4)]">
+                        <button
+                            onClick={handleExportPDF}
+                            className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg flex items-center gap-2 transition-all font-medium text-sm shadow-[0_0_15px_-3px_rgba(168,85,247,0.4)] active:scale-95"
+                        >
                             <Download className="w-4 h-4" />
                             <span>Export PDF</span>
                         </button>
@@ -37,8 +74,9 @@ const ReportView: React.FC<ReportViewProps> = ({ reportContent }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 md:p-12 bg-[#050508]/50 overflow-y-auto max-h-[70vh] custom-scrollbar">
-                    <div className="prose prose-invert prose-purple max-w-none prose-headings:font-semibold prose-h1:text-3xl prose-h2:text-2xl prose-p:text-gray-300 prose-p:leading-relaxed prose-li:text-gray-300">
+                <div className="p-8 md:p-12 bg-[#050508] overflow-y-auto max-h-[70vh] custom-scrollbar">
+                    {/* ID added for html2canvas target */}
+                    <div id="report-content" className="prose prose-invert prose-purple max-w-none prose-headings:font-semibold prose-h1:text-3xl prose-h2:text-2xl prose-p:text-gray-300 prose-p:leading-relaxed prose-li:text-gray-300 bg-[#050508] p-4 text-white">
                         {/* 
                           In a real application, you should use `react-markdown` here.
                           For this demo, we are using `whitespace-pre-wrap` to preserve formatting from the raw text.

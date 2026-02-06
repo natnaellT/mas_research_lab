@@ -4,8 +4,10 @@ uvicorn
 python-dotenv
 langchain-openai
 google-generativeai
+langchain-google-genai
 duckduckgo-search
 pytest
 pytest-asyncio
 httpx
 langchain-community
+langchain

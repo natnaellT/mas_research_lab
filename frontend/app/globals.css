@@ -1,10 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Theme Configuration (Tailwind v4) */
+@theme {
+  --color-foreground-rgb: 236 237 238;
+  --color-background-start-rgb: 2 6 23;
+  --color-background-end-rgb: 10 10 15;
+  
+  --animate-shimmer: shimmer 2s linear infinite;
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
 
 :root {
   --foreground-rgb: 236, 237, 238;
-  --background-start-rgb: 2, 6, 23; /* Slate 950 */
+  --background-start-rgb: 2, 6, 23;
   --background-end-rgb: 10, 10, 15;
   
   /* Glassmorphism Variables */

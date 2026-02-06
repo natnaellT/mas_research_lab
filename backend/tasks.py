@@ -1,18 +1,18 @@
 from crewai import Task
 
 class ResearchTasks:
-    def research_task(self, agent, topic):
+    def research_task(self, agent):
         return Task(
-            description=f"""Conduct a comprehensive research on the latest developments in {topic}.
+            description="""Conduct a comprehensive research on the latest developments in {topic}.
             Identify key players, recent breakthroughs, and current challenges.
             Collect concrete data and recent news articles (within the last year).""",
-            expected_output=f"A detailed research summary on {topic} with at least 5 key findings and citations.",
+            expected_output="A detailed research summary on {topic} with at least 5 key findings and citations.",
             agent=agent
         )
 
     def analysis_task(self, agent, context):
         return Task(
-            description=f"""Analyze the provided research data.
+            description="""Analyze the provided research data on {topic}.
             Evaluate the technical feasibility and market potential.
             Identify 3 major opportunities and 3 major risks (technical/market).""",
             expected_output="A structured analysis report identifying opportunities, risks, and feasibility.",
@@ -22,7 +22,7 @@ class ResearchTasks:
     
     def critique_task(self, agent, context):
         return Task(
-            description=f"""Review the research and analysis for ethical concerns.
+            description="""Review the research and analysis on {topic} for ethical concerns.
             Identify potential biases, privacy issues, or negative societal impacts.
             Suggest mitigations for identified risks.""",
             expected_output="An ethical review document highlighting safety/ethics risks and mitigations.",
@@ -32,7 +32,7 @@ class ResearchTasks:
 
     def future_forecast_task(self, agent, context):
         return Task(
-            description=f"""Based on the analysis, create a "Scenario 2075".
+            description="""Based on the analysis of {topic}, create a "Scenario 2075".
             Extrapolate the current trends 50 years into the future.
             Describe a day in the life of a person living with this technology in 2075.
             Be creative, vivid, and speculative but grounded in the technical analysis.""",
@@ -43,7 +43,7 @@ class ResearchTasks:
 
     def strategy_task(self, agent, context):
         return Task(
-            description=f"""Based on the analysis and future forecast, develop a high-level strategic roadmap.
+            description="""Based on the analysis and future forecast for {topic}, develop a high-level strategic roadmap.
             Identify 3 "Billion Dollar Opportunities".
             Identify 3 "Existential Threats" to current incumbents.
             Recommend a concrete "Go-to-Market" strategy for a startup in this space.""",
@@ -55,7 +55,8 @@ class ResearchTasks:
 
     def writing_task(self, agent, context):
         return Task(
-            description=f"""Synthesize the research, analysis, future vision, strategic advice, and ethical critique into a final Grand Report.
+            description="""Synthesize the inquiry on {topic} into a final Grand Report.
+            Include research, analysis, future vision, strategic advice, and ethical critique.
             The tone should be authoritative yet inspiring.
             
             Structure the report as follows:
