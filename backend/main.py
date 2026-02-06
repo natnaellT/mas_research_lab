@@ -33,7 +33,6 @@ job_store = {}
 def kick_off_crew(job_id: str, topic: str):
     try:
         job_store[job_id] = {"status": "RUNNING", "logs": [], "result": None}
-        
         agents = ResearchAgents()
         tasks = ResearchTasks()
 

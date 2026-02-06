@@ -12,23 +12,69 @@ const ReportView: React.FC<ReportViewProps> = ({ reportContent }) => {
 
         try {
             const html2canvas = (await import('html2canvas')).default;
-            const jsPDF = (await import('jspdf')).default;
+            const { jsPDF } = await import('jspdf');
 
             const element = document.getElementById('report-content');
             if (!element) return;
 
-            const canvas = await html2canvas(element, { scale: 2 });
+            // Capture the element using html2canvas
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#050508', // Match the report background
+                onclone: (clonedDoc) => {
+                    const clonedElement = clonedDoc.getElementById('report-content');
+                    if (clonedElement) {
+                        // Force a white text color and dark background for the export
+                        // since html2canvas sometimes struggles with complex inherited styles
+                        clonedElement.style.color = '#ffffff';
+                        clonedElement.style.backgroundColor = '#050508';
+
+                        // Fix for oklch and other modern CSS if needed
+                        const allElements = clonedElement.querySelectorAll('*');
+                        allElements.forEach((el) => {
+                            if (el instanceof HTMLElement) {
+                                const style = window.getComputedStyle(el);
+                                // If color is oklch, override it to something safe
+                                if (style.color.includes('oklch')) {
+                                    el.style.color = '#ffffff';
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
             const imgData = canvas.toDataURL('image/png');
 
+            // PDF Preparation
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // Page 1
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+
+            // Subsequent Pages
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+
             pdf.save('Research_Report.pdf');
         } catch (error) {
             console.error('PDF Export failed', error);
-            alert("Failed to export PDF. Please try again.");
+            alert("Failed to export PDF. Please check the console for details.");
         }
     };
 
